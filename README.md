@@ -1,4 +1,12 @@
-# hub-forward-auth
+# WORK IN PROGRESS!!!!!!!
+
+# Hub Forward Auth
+
+This is a small project heavily inspired by https://github.com/thomseddon/traefik-forward-auth
+Does somewhat the same thing, but it is designed to tightly integrate with [JetBrains Hub](https://www.jetbrains.com/hub/)
+it uses Hub ability to serve as an OIDC Provider, and then it's API to check if the user has access to the URL
+based on the Services the user has access.
+
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
