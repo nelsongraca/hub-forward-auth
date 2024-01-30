@@ -25,7 +25,7 @@ class AuxFilter(
     fun returnCookieFilter(requestContext: ContainerRequestContext, responseContext: ContainerResponseContext) {
         try {
             val returnAddress = util.buildUrlFromForwardHeaders(requestContext)
-            if (util.urlIsSelf(returnAddress)|| (responseContext.status in 200..299)) {
+            if (util.urlIsSelf(returnAddress) || (responseContext.status in 200..299)) {
                 return
             }
             val encodedCokie = RuntimeDelegate.getInstance()

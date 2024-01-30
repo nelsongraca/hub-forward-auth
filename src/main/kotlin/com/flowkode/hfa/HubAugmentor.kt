@@ -1,5 +1,6 @@
 package com.flowkode.hfa
 
+import com.flowkode.hfa.hub.HubClient
 import io.quarkus.oidc.AccessTokenCredential
 import io.quarkus.security.credential.TokenCredential
 import io.quarkus.security.identity.AuthenticationRequestContext
@@ -19,7 +20,7 @@ class HubAugmentor : SecurityIdentityAugmentor {
     lateinit var hubClient: HubClient
 
     override fun augment(identity: SecurityIdentity, context: AuthenticationRequestContext): Uni<SecurityIdentity> {
-        return context.runBlocking(build(identity));
+        return context.runBlocking(build(identity))
     }
 
     private fun build(identity: SecurityIdentity): Supplier<SecurityIdentity> {
@@ -36,7 +37,10 @@ class HubAugmentor : SecurityIdentityAugmentor {
                     for (userGroup in groups.userGroups) {
                         builder.addRole(userGroup.name)
                     }
-                    val services = hubClient.getHeader(token).map { it.homeUrl }.toSet()
+                    val services = hubClient.getHeader(token)
+                        .filter { it != null && it.homeUrl.isNotEmpty() }
+                        .map { it!!.homeUrl }
+                        .toSet()
                     builder.addAttribute("serviceUrls", services)
                 }
                 builder.build()
