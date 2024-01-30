@@ -72,6 +72,10 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-container-image-jib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
             <scope>test</scope>
         </dependency>
@@ -199,6 +203,17 @@
             <properties>
                 <skipITs>false</skipITs>
                 <quarkus.package.type>native</quarkus.package.type>
+            </properties>
+        </profile>
+        <profile>
+            <id>container</id>
+            <properties>
+                <quarkus.container-image.registry>ghcr.io</quarkus.container-image.registry>
+                <quarkus.container-image.group>nelsongraca</quarkus.container-image.group>
+                <quarkus.container-image.name>hub-forward-auth</quarkus.container-image.name>
+                <quarkus.container-image.additional-tags>latest</quarkus.container-image.additional-tags>
+                <quarkus.container-image.build>true</quarkus.container-image.build>
+                <quarkus.container-image.push>true</quarkus.container-image.push>
             </properties>
         </profile>
     </profiles>
