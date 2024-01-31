@@ -31,4 +31,4 @@ jobs:
           password: ${{secrets.GITHUB_TOKEN}}
 
       - name: Build with Maven
-        run: ./mvnw package -Pnative -Pcontainer
+        run: ./mvnw package -Pnative -Pcontainer -Dgithub.token=$GITHUB_TOKEN
