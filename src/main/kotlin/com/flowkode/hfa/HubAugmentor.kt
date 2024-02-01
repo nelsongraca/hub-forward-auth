@@ -38,7 +38,7 @@ class HubAugmentor : SecurityIdentityAugmentor {
                         builder.addRole(userGroup.name)
                     }
                     val services = hubClient.getHeader(token)
-                        .filter { it != null && it.homeUrl.isNotEmpty() }
+                        .filter { !it?.homeUrl.isNullOrBlank() }
                         .map { it!!.homeUrl }
                         .toSet()
                     builder.addAttribute("serviceUrls", services)
