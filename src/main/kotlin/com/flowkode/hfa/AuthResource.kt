@@ -28,7 +28,9 @@ class AuthResource(
             return if (util.urlIsSelf(url) && returnUrl != null) {
                 Response.temporaryRedirect(URI(returnUrl)).cookie(util.returnCookie(null)).build()
             } else if ((securityIdentity.attributes["serviceUrls"] as Set<String>).any { url.startsWith(it) }) {
-                Response.ok().build()
+                Response.ok()
+                    .header("X-Forwarded-User", securityIdentity.principal.name)
+                    .build()
             } else {
                 Response.status(Response.Status.FORBIDDEN).build()
             }
