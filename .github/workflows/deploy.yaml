@@ -43,8 +43,7 @@ jobs:
       - name: Build with Maven
         run: |
           pwd
-          ./mvnw package -
-          -Pcontainer -Dgithub.token=${{secrets.GITHUB_TOKEN}}
+          ./mvnw package -Pcontainer -Dgithub.token=${{secrets.GITHUB_TOKEN}}
           pwd
           ls -rlah
           echo sp
