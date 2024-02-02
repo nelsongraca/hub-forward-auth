@@ -42,9 +42,7 @@ jobs:
 
       - name: Build with Maven
         run: |
-          pwd
           ./mvnw package -Pcontainer -Dgithub.token=${{secrets.GITHUB_TOKEN}}
-          pwd
-          ls -rlah
+          ls -Rlah target
           echo sp
-          ls -rlah $HOME
+          ls -Rlah $HOME/.cache/google-cloud-tools-java/jib
