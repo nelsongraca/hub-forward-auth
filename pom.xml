@@ -226,6 +226,7 @@
                 <quarkus.container-image.additional-tags>latest</quarkus.container-image.additional-tags>
                 <quarkus.container-image.build>true</quarkus.container-image.build>
                 <quarkus.container-image.push>true</quarkus.container-image.push>
+                <quarkus.jib.application-layers-cache>${project.build.directory}/jib-cache</quarkus.jib.application-layers-cache>
             </properties>
         </profile>
     </profiles>
