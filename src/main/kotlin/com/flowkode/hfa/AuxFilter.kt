@@ -6,6 +6,7 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.container.ContainerRequestContext
 import jakarta.ws.rs.container.ContainerResponseContext
 import jakarta.ws.rs.core.NewCookie
+import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.ext.RuntimeDelegate
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jboss.resteasy.reactive.server.ServerResponseFilter
@@ -24,6 +25,9 @@ class AuxFilter(
     @ServerResponseFilter
     fun returnCookieFilter(requestContext: ContainerRequestContext, responseContext: ContainerResponseContext) {
         try {
+            if (responseContext.status == 302) {
+                responseContext.status = Response.Status.TEMPORARY_REDIRECT.statusCode;
+            }
             val returnAddress = util.buildUrlFromForwardHeaders(requestContext)
             if (util.urlIsSelf(returnAddress) || (responseContext.status in 200..299)) {
                 return
