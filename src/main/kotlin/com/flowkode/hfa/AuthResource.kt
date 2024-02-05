@@ -20,6 +20,8 @@ class AuthResource(
 
     @GET
     fun root(@Context headers: HttpHeaders, @CookieParam("return") returnUrl: String?): Response {
+        if (util.isWhiteListed(headers.getHeaderString("X-Forwarded-For")))
+            return Response.ok().build()
         try {
             if (securityIdentity.isAnonymous) {
                 throw UnauthorizedException()
