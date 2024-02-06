@@ -13,6 +13,8 @@ import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.util.function.Supplier
 
 
+const val SERVICE_URLS = "serviceUrls"
+
 @ApplicationScoped
 class HubAugmentor : SecurityIdentityAugmentor {
 
@@ -41,7 +43,7 @@ class HubAugmentor : SecurityIdentityAugmentor {
                         .filter { !it?.homeUrl.isNullOrBlank() }
                         .map { it!!.homeUrl }
                         .toSet()
-                    builder.addAttribute("serviceUrls", services)
+                    builder.addAttribute(SERVICE_URLS, services)
                 }
                 builder.build()
             }

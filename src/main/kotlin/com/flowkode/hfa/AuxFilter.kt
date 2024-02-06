@@ -32,10 +32,10 @@ class AuxFilter(
             if (util.urlIsSelf(returnAddress) || (responseContext.status in 200..299)) {
                 return
             }
-            val encodedCokie = RuntimeDelegate.getInstance()
+            val encodedCookie = RuntimeDelegate.getInstance()
                 .createHeaderDelegate(NewCookie::class.java)
                 .toString(util.returnCookie(returnAddress))
-            responseContext.headers.add("Set-Cookie", encodedCokie)
+            responseContext.headers.add("Set-Cookie", encodedCookie)
         } catch (_: IllegalArgumentException) {
             // do nothing
         }
