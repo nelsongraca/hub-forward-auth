@@ -26,7 +26,7 @@ class AuthResource(
             if (securityIdentity.isAnonymous) {
                 throw UnauthorizedException()
             }
-            val url = util.buildUrlFromForwardHeaders(headers)
+            val url = util.buildUrlFromForwardHeaders(headers.requestHeaders)
             return if (util.urlIsSelf(url) && returnUrl != null) {
                 Response.temporaryRedirect(URI(returnUrl)).cookie(util.returnCookie(null)).build()
             } else if ((securityIdentity.attributes["serviceUrls"] as Set<String>).any { url.startsWith(it) }) {

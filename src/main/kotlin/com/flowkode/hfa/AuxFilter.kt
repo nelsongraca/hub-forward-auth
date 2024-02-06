@@ -28,7 +28,7 @@ class AuxFilter(
             if (responseContext.status == 302) {
                 responseContext.status = Response.Status.TEMPORARY_REDIRECT.statusCode;
             }
-            val returnAddress = util.buildUrlFromForwardHeaders(requestContext)
+            val returnAddress = util.buildUrlFromForwardHeaders(requestContext.headers)
             if (util.urlIsSelf(returnAddress) || (responseContext.status in 200..299)) {
                 return
             }
