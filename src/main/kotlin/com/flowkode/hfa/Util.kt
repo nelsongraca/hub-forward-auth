@@ -6,6 +6,7 @@ import jakarta.ws.rs.core.NewCookie
 import org.apache.commons.net.util.SubnetUtils
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 
 const val X_FORWARDED_PROTO = "X-Forwarded-Proto"
@@ -27,19 +28,21 @@ class Util(
     @ConfigProperty(name = "auth.domain") val authDomain: String,
     @ConfigProperty(name = "auth.port") val authPort: Int,
     @ConfigProperty(name = "cookie.domain") val cookieDomain: String,
-    @ConfigProperty(name = "whitelist") val whitelistNetworks: String?,
+    @ConfigProperty(name = "whitelist", defaultValue = "") val whitelistNetworks: Optional<String>,
     @ConfigProperty(name = "secure") val secure: Boolean
 ) {
 
-    val whiteList: List<SubnetUtils> = whitelistNetworks.orEmpty()
-        .split(",")
-        .asSequence()
-        .filter { it.isNotBlank() }
-        .map { if (it.contains("/")) it else "$it/32" }
-        .map { runCatching { SubnetUtils(it) } }
-        .mapNotNull { it.getOrNull() }
-        .onEach { su -> su.isInclusiveHostCount = true }
-        .toList()
+    val whiteList: List<SubnetUtils> by lazy {
+        whitelistNetworks.getOrNull().orEmpty()
+            .split(",")
+            .asSequence()
+            .filter { it.isNotBlank() }
+            .map { if (it.contains("/")) it else "$it/32" }
+            .map { runCatching { SubnetUtils(it) } }
+            .mapNotNull { it.getOrNull() }
+            .onEach { su -> su.isInclusiveHostCount = true }
+            .toList()
+    }
 
     @Throws(IllegalArgumentException::class)
     private fun buildAddress(protocol: String, host: String, port: String, requestedURI: String): String {

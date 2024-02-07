@@ -1,18 +1,17 @@
 package com.flowkode.hfa
 
-import com.google.common.net.HttpHeaders.*
 import jakarta.ws.rs.core.MultivaluedHashMap
 import jakarta.ws.rs.core.NewCookie
 import org.junit.jupiter.api.Assertions
-
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 class UtilTest {
 
     private var baseHeaderMap: MultivaluedHashMap<String, String> = MultivaluedHashMap()
-    private var secureUtil: Util = Util("some.domain.local", 443, "some.domain.local", "", true)
-    private var insecureUtil: Util = Util("some.domain.local", 80, "some.domain.local", "", false)
+    private var secureUtil: Util = Util("some.domain.local", 443, "some.domain.local", Optional.empty(), true)
+    private var insecureUtil: Util = Util("some.domain.local", 80, "some.domain.local", Optional.empty(), false)
 
     @BeforeEach
     fun setUp() {
@@ -24,8 +23,8 @@ class UtilTest {
                 Pair(X_FORWARDED_URI, "/something")
             )
         )
-        secureUtil = Util("some.domain.local", 443, "some.domain.local", "", true)
-        insecureUtil = Util("some.domain.local", 80, "some.domain.local", "", false)
+        secureUtil = Util("some.domain.local", 443, "some.domain.local", Optional.empty(), true)
+        insecureUtil = Util("some.domain.local", 80, "some.domain.local", Optional.empty(), false)
     }
 
     @Test
@@ -112,7 +111,7 @@ class UtilTest {
 
     @Test
     fun urlIsSelfHttpsAltPort() {
-        secureUtil = Util("some.domain.local", 8443, "", "", true)
+        secureUtil = Util("some.domain.local", 8443, "", Optional.empty(), true)
         Assertions.assertTrue(secureUtil.urlIsSelf("https://some.domain.local:8443/"))
     }
 
@@ -123,7 +122,7 @@ class UtilTest {
 
     @Test
     fun urlIsSelfHttpAltPort() {
-        insecureUtil = Util("some.domain.local", 8080, "", "", false)
+        insecureUtil = Util("some.domain.local", 8080, "", Optional.empty(), false)
         Assertions.assertTrue(insecureUtil.urlIsSelf("http://some.domain.local:8080/"))
     }
 
@@ -177,7 +176,7 @@ class UtilTest {
 
     @Test
     fun testWhitelistInRange() {
-        val util = Util("", 443, "", "10.0.0.0/8", true)
+        val util = Util("", 443, "", Optional.of("10.0.0.0/8"), true)
 
         Assertions.assertTrue(util.isWhiteListed("10.0.0.0"))
         Assertions.assertTrue(util.isWhiteListed("10.255.255.255"))
@@ -192,19 +191,23 @@ class UtilTest {
 
     @Test
     fun testEmptyWhitelist() {
-        val util = Util("", 443, "", "", true)
+        val util = Util("", 443, "", Optional.empty(), true)
         Assertions.assertFalse(util.isWhiteListed("10.0.0.0"))
     }
 
-    @Test
-    fun testNullWhitelist() {
-        val util = Util("", 443, "", null, true)
-        Assertions.assertFalse(util.isWhiteListed("10.0.0.0"))
-    }
+//    @Test
+//    fun testNullWhitelist() {
+//        val util = Util("", 443, "", "", true)
+//        Assertions.assertFalse(util.isWhiteListed("10.0.0.0"))
+//    }
 
     @Test
     fun testInvalidWhitelist() {
-        val util = Util("", 443, "", "10", true)
+        val util = Util("", 443, "", Optional.of("10"), true)
+        Assertions.assertFalse(util.isWhiteListed("10.0.0.0"))
+    }    @Test
+    fun testInvalidWhitelist2() {
+        val util = Util("", 443, "", Optional.of("10,,"), true)
         Assertions.assertFalse(util.isWhiteListed("10.0.0.0"))
     }
 }
