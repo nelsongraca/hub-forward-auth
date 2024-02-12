@@ -1,11 +1,14 @@
 package com.flowkode.hfa
 
+import com.flowkode.hfa.hub.HubClient
+import io.quarkus.test.InjectMock
 import io.quarkus.test.common.http.TestHTTPEndpoint
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.junit.mockito.InjectSpy
 import io.quarkus.test.security.TestSecurity
 import io.restassured.RestAssured.given
 import io.restassured.matcher.RestAssuredMatchers.detailedCookie
+import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.hamcrest.CoreMatchers
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.doReturn
