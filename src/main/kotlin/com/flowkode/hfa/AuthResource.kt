@@ -21,8 +21,8 @@ class AuthResource(
 ) {
 
     @GET
-    fun root(@Context headers: HttpHeaders, @CookieParam(COOKIE_NAME) returnUrl: String?): Response {
-        if (util.isWhiteListed(headers.getHeaderString(X_FORWARDED_FOR)))
+    fun root(@Context headers: HttpHeaders, @CookieParam(Util.COOKIE_NAME) returnUrl: String?): Response {
+        if (util.isWhiteListed(headers.getHeaderString(Util.X_FORWARDED_FOR)))
             return Response.ok().build()
 
         if (securityIdentity.isAnonymous) {
@@ -32,10 +32,10 @@ class AuthResource(
         return if (util.urlIsSelf(url) && returnUrl != null) {
             Response.temporaryRedirect(URI(returnUrl)).cookie(util.returnCookie(null)).build()
         } else {
-            val serviceUrls = securityIdentity.attributes[SERVICE_URLS]
+            val serviceUrls = securityIdentity.attributes[HubAugmentor.SERVICE_URLS]
             if (serviceUrls != null && (serviceUrls as Set<String>).any { url.startsWith(it) }) {
                 Response.ok()
-                    .header(X_FORWARDED_USER, securityIdentity.principal.name)
+                    .header(Util.X_FORWARDED_USER, securityIdentity.principal.name)
                     .build()
             } else {
                 Response.status(Response.Status.FORBIDDEN).build()

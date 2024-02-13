@@ -21,7 +21,7 @@ class TestAugmentor : TestSecurityIdentityAugmentor {
             .toSet()
         val builder = QuarkusSecurityIdentity.builder(identity)
         if (urls.isNotEmpty()) {
-            builder.addAttribute(SERVICE_URLS, urls)
+            builder.addAttribute(HubAugmentor.SERVICE_URLS, urls)
         }
         return builder.build()
     }

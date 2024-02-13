@@ -13,10 +13,14 @@ import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.util.function.Supplier
 
 
-const val SERVICE_URLS = "serviceUrls"
+
 
 @ApplicationScoped
 class HubAugmentor : SecurityIdentityAugmentor {
+
+    companion object  {
+        const val SERVICE_URLS = "serviceUrls"
+    }
 
     @RestClient
     lateinit var hubClient: HubClient

@@ -9,20 +9,6 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 
-const val X_FORWARDED_PROTO = "X-Forwarded-Proto"
-
-const val X_FORWARDED_HOST = "X-Forwarded-Host"
-
-const val X_FORWARDED_PORT = "X-Forwarded-Port"
-
-const val X_FORWARDED_URI = "X-Forwarded-Uri"
-
-const val X_FORWARDED_USER = "X-Forwarded-User"
-
-const val X_FORWARDED_FOR = "X-Forwarded-For"
-
-const val COOKIE_NAME = "return"
-
 @ApplicationScoped
 class Util(
     @ConfigProperty(name = "auth.domain") val authDomain: String,
@@ -31,6 +17,22 @@ class Util(
     @ConfigProperty(name = "whitelist", defaultValue = "") val whitelistNetworks: Optional<String>,
     @ConfigProperty(name = "secure") val secure: Boolean
 ) {
+    companion object {
+
+        const val X_FORWARDED_PROTO = "X-Forwarded-Proto"
+
+        const val X_FORWARDED_HOST = "X-Forwarded-Host"
+
+        const val X_FORWARDED_PORT = "X-Forwarded-Port"
+
+        const val X_FORWARDED_URI = "X-Forwarded-Uri"
+
+        const val X_FORWARDED_USER = "X-Forwarded-User"
+
+        const val X_FORWARDED_FOR = "X-Forwarded-For"
+
+        const val COOKIE_NAME = "return"
+    }
 
     val whiteList: List<SubnetUtils> by lazy {
         whitelistNetworks.getOrNull().orEmpty()
@@ -104,6 +106,3 @@ class Util(
 
 }
 
-fun List<String>?.firstOrEmpty(): String {
-    return if (isNullOrEmpty()) "" else this[0]
-}

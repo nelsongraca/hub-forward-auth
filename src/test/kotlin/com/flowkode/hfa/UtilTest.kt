@@ -17,10 +17,10 @@ class UtilTest {
     fun setUp() {
         baseHeaderMap = MultivaluedHashMap(
             mutableMapOf(
-                Pair(X_FORWARDED_PROTO, "https"),
-                Pair(X_FORWARDED_HOST, "some.domain.local"),
-                Pair(X_FORWARDED_PORT, "443"),
-                Pair(X_FORWARDED_URI, "/something")
+                Pair(Util.X_FORWARDED_PROTO, "https"),
+                Pair(Util.X_FORWARDED_HOST, "some.domain.local"),
+                Pair(Util.X_FORWARDED_PORT, "443"),
+                Pair(Util.X_FORWARDED_URI, "/something")
             )
         )
         secureUtil = Util("some.domain.local", 443, "some.domain.local", Optional.empty(), true)
@@ -45,7 +45,7 @@ class UtilTest {
 
     @Test
     fun buildUrlFromHeadersBaseNoPath() {
-        baseHeaderMap[X_FORWARDED_URI] = listOf("")
+        baseHeaderMap[Util.X_FORWARDED_URI] = listOf("")
         Assertions.assertEquals(
             "https://some.domain.local/",
             secureUtil.buildUrlFromForwardHeaders(baseHeaderMap)
@@ -54,7 +54,7 @@ class UtilTest {
 
     @Test
     fun buildUrlFromHeadersHttpsDifferentPort() {
-        baseHeaderMap[X_FORWARDED_PORT] = listOf("8443")
+        baseHeaderMap[Util.X_FORWARDED_PORT] = listOf("8443")
         Assertions.assertEquals(
             "https://some.domain.local:8443/something",
             secureUtil.buildUrlFromForwardHeaders(baseHeaderMap)
@@ -63,8 +63,8 @@ class UtilTest {
 
     @Test
     fun buildUrlFromHeadersHttpDifferentPort() {
-        baseHeaderMap[X_FORWARDED_PROTO] = listOf("http")
-        baseHeaderMap[X_FORWARDED_PORT] = listOf("8080")
+        baseHeaderMap[Util.X_FORWARDED_PROTO] = listOf("http")
+        baseHeaderMap[Util.X_FORWARDED_PORT] = listOf("8080")
         Assertions.assertEquals(
             "http://some.domain.local:8080/something",
             secureUtil.buildUrlFromForwardHeaders(baseHeaderMap)
@@ -73,7 +73,7 @@ class UtilTest {
 
     @Test
     fun buildUrlFromHeadersNoProtocol() {
-        baseHeaderMap[X_FORWARDED_PROTO] = listOf("")
+        baseHeaderMap[Util.X_FORWARDED_PROTO] = listOf("")
         Assertions.assertThrows(
             IllegalArgumentException::class.java
         ) { secureUtil.buildUrlFromForwardHeaders(baseHeaderMap) }
@@ -81,7 +81,7 @@ class UtilTest {
 
     @Test
     fun buildUrlFromHeadersNoHost() {
-        baseHeaderMap[X_FORWARDED_HOST] = listOf("")
+        baseHeaderMap[Util.X_FORWARDED_HOST] = listOf("")
         Assertions.assertThrows(
             IllegalArgumentException::class.java
         ) { secureUtil.buildUrlFromForwardHeaders(baseHeaderMap) }
@@ -90,7 +90,7 @@ class UtilTest {
 
     @Test
     fun buildUrlFromHeadersHostWhitespace() {
-        baseHeaderMap[X_FORWARDED_HOST] = listOf("  ")
+        baseHeaderMap[Util.X_FORWARDED_HOST] = listOf("  ")
         Assertions.assertThrows(
             IllegalArgumentException::class.java
         ) { secureUtil.buildUrlFromForwardHeaders(baseHeaderMap) }
@@ -98,7 +98,7 @@ class UtilTest {
 
     @Test
     fun buildUrlBadProtocol() {
-        baseHeaderMap[X_FORWARDED_PROTO] = listOf("ftp")
+        baseHeaderMap[Util.X_FORWARDED_PROTO] = listOf("ftp")
         Assertions.assertThrows(
             IllegalArgumentException::class.java
         ) { secureUtil.buildUrlFromForwardHeaders(baseHeaderMap) }
