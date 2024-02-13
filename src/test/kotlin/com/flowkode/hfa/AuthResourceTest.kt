@@ -17,31 +17,6 @@ import org.junit.jupiter.api.Test
 @TestHTTPEndpoint(AuthResource::class)
 class AuthResourceTest {
 
-//
-//    @InjectMock
-//    @MockitoConfig(convertScopes = true)
-//    @RestClient
-//    lateinit var hubclient: HubClient
-
-
-    //        Mockito.doReturn(
-//            UserGroupsResponse(
-//                0,
-//                1,
-//                1,
-//                listOf(UserGroup("admin", "admin"))
-//            )
-//        )
-//            .`when`(hubclient)
-//            .getUserGroups(anyInt(), anyInt(), anyString())
-//
-//       Mockito.doReturn(
-//          listOf(HeaderItem("service","service","http://some.host.local/"))
-//        )
-//            .`when`(hubclient)
-//            .getHeader(anyString())
-
-
     @Test
     @TestSecurity(user = "someUser", attributes = [SecurityAttribute(key = "urls", value = "http://some.host.local/")])
     fun hasAccessToUrl() {
@@ -97,6 +72,7 @@ class AuthResourceTest {
             .then()
             .statusCode(403)
     }
+
     @Test
     @TestSecurity(user = "someUser")
     fun noServiceUrls() {
