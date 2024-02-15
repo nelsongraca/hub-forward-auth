@@ -14,6 +14,7 @@ import io.quarkus.test.oidc.server.OidcWiremockTestResource
 import io.restassured.RestAssured
 import io.smallrye.jwt.build.Jwt
 import org.eclipse.microprofile.rest.client.inject.RestClient
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito

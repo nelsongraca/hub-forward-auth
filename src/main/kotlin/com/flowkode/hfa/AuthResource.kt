@@ -10,6 +10,7 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.HttpHeaders
 import jakarta.ws.rs.core.Response
+import org.slf4j.LoggerFactory
 import java.net.URI
 
 
@@ -20,12 +21,16 @@ class AuthResource(
     @Inject var util: Util
 ) {
 
+    private val logger = LoggerFactory.getLogger(AuthResource::class.java)
+
     @GET
     fun root(@Context headers: HttpHeaders, @CookieParam(Util.COOKIE_NAME) returnUrl: String?): Response {
-        if (util.isWhiteListed(headers.getHeaderString(Util.X_FORWARDED_FOR)))
+        val forwardedFor = headers.getHeaderString(Util.X_FORWARDED_FOR)
+        if (util.isWhiteListed(forwardedFor))
             return Response.ok().build()
 
         if (securityIdentity.isAnonymous) {
+            logger.info("User is anonymous IP: $forwardedFor")
             throw UnauthorizedException()
         }
         val url = util.buildUrlFromForwardHeaders(headers.requestHeaders)
