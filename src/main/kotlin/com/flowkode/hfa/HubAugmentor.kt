@@ -1,8 +1,6 @@
 package com.flowkode.hfa
 
 import com.flowkode.hfa.hub.HubClient
-import io.quarkus.oidc.AccessTokenCredential
-import io.quarkus.security.credential.TokenCredential
 import io.quarkus.security.identity.AuthenticationRequestContext
 import io.quarkus.security.identity.SecurityIdentity
 import io.quarkus.security.identity.SecurityIdentityAugmentor
@@ -13,12 +11,11 @@ import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.util.function.Supplier
 
 
-
-
 @ApplicationScoped
 class HubAugmentor : SecurityIdentityAugmentor {
 
-    companion object  {
+    companion object {
+
         const val SERVICE_URLS = "serviceUrls"
     }
 
@@ -32,25 +29,22 @@ class HubAugmentor : SecurityIdentityAugmentor {
     private fun build(identity: SecurityIdentity): Supplier<SecurityIdentity> {
         return if (identity.isAnonymous) {
             Supplier { identity }
-        } else {
+        }
+        else {
             // create a new builder and copy principal, attributes, credentials and roles from the original identity
             Supplier {
                 val builder = QuarkusSecurityIdentity.builder(identity)
-                val accessToken = identity.credentials.first { a -> a is AccessTokenCredential }
-                if (accessToken != null) {
-                    val token = "Bearer " + (accessToken as TokenCredential).token
-                    val groups = hubClient.getUserGroups(1, 1000, token)
-                    for (userGroup in groups.userGroups) {
-                        builder.addRole(userGroup.name)
-                    }
-                    val services = hubClient.getHeader(token)
-                        .filter { !it?.homeUrl.isNullOrBlank() }
-                        .filterNotNull()
-                        .map { it.homeUrl }
-                        .toSet()
-                    if (services.isNotEmpty())
-                        builder.addAttribute(SERVICE_URLS, services)
+                val groups = hubClient.getUserGroups(1, 1000)
+                for (userGroup in groups.userGroups) {
+                    builder.addRole(userGroup.name)
                 }
+                val services = hubClient.getHeader()
+                    .filter { !it?.homeUrl.isNullOrBlank() }
+                    .filterNotNull()
+                    .map { it.homeUrl }
+                    .toSet()
+                if (services.isNotEmpty())
+                    builder.addAttribute(SERVICE_URLS, services)
                 builder.build()
             }
         }

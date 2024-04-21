@@ -45,12 +45,12 @@ class HubAugmentorTest {
                 listOf(UserGroup("admin", "admin"))
             )
         ).`when`(hubclient)
-            .getUserGroups(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyString())
+            .getUserGroups(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt())
 
         Mockito.doReturn(
             listOf(HeaderItem("service", "service", "http://some.host.local/"))
         ).`when`(hubclient)
-            .getHeader(ArgumentMatchers.anyString())
+            .getHeader()
 
         RestAssured.given()
             .headers(
@@ -67,7 +67,7 @@ class HubAugmentorTest {
             .then()
             .statusCode(200)
 
-        Mockito.verify(hubclient, Mockito.atMostOnce()).getUserGroups(1, 1000, "Bearer $token")
-        Mockito.verify(hubclient, Mockito.atMostOnce()).getHeader("Bearer $token")
+        Mockito.verify(hubclient, Mockito.atMostOnce()).getUserGroups(1, 1000)
+        Mockito.verify(hubclient, Mockito.atMostOnce()).getHeader()
     }
 }
