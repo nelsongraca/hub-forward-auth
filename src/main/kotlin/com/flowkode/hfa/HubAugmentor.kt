@@ -1,6 +1,7 @@
 package com.flowkode.hfa
 
 import com.flowkode.hfa.hub.HubClient
+import io.quarkus.oidc.runtime.OidcJwtCallerPrincipal
 import io.quarkus.security.identity.AuthenticationRequestContext
 import io.quarkus.security.identity.SecurityIdentity
 import io.quarkus.security.identity.SecurityIdentityAugmentor
@@ -34,8 +35,10 @@ class HubAugmentor : SecurityIdentityAugmentor {
             // create a new builder and copy principal, attributes, credentials and roles from the original identity
             Supplier {
                 val builder = QuarkusSecurityIdentity.builder(identity)
-                val groups = hubClient.getUserGroups(1, 1000)
-                for (userGroup in groups.userGroups) {
+                val groups = hubClient.getUserGroups(1, 1000).userGroups
+                val user = hubClient.getUser((identity.principal as OidcJwtCallerPrincipal).subject)
+                user.groups.forEach { g -> g.name = groups.find { it.id == g.id }?.name }
+                for (userGroup in user.groups) {
                     builder.addRole(userGroup.name)
                 }
                 val services = hubClient.getHeader()

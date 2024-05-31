@@ -5,6 +5,7 @@ import io.quarkus.oidc.token.propagation.AccessToken
 import io.quarkus.rest.client.reactive.ClientQueryParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.QueryParam
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
 
@@ -21,6 +22,12 @@ interface HubClient {
         @QueryParam("\$skip") start: Int,
         @QueryParam("\$top") limit: Int
     ): UserGroupsResponse
+
+    @GET
+    @Path("/users/{userId}")
+    @ClientQueryParam(name = "fields", value = ["id,name,groups"])
+    @CacheResult(cacheName = "hub-cache")
+    fun getUser(@PathParam("userId") userId: String): User
 
     @GET
     @Path("/services/header")

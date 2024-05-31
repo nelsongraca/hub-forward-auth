@@ -29,6 +29,8 @@ class Util(
 
         const val X_FORWARDED_USER = "X-Forwarded-User"
 
+        const val X_FORWARDED_GROUPS = "X-Forwarded-Groups"
+
         const val X_FORWARDED_FOR = "X-Forwarded-For"
 
         const val COOKIE_NAME = "return"
