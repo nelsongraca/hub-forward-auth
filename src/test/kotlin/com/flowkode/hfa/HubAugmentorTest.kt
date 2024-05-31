@@ -1,9 +1,6 @@
 package com.flowkode.hfa
 
-import com.flowkode.hfa.hub.HeaderItem
-import com.flowkode.hfa.hub.HubClient
-import com.flowkode.hfa.hub.UserGroup
-import com.flowkode.hfa.hub.UserGroupsResponse
+import com.flowkode.hfa.hub.*
 import io.quarkus.test.InjectMock
 import io.quarkus.test.common.QuarkusTestResource
 import io.quarkus.test.common.http.TestHTTPEndpoint
@@ -35,7 +32,17 @@ class HubAugmentorTest {
         val token = Jwt.preferredUserName("someUser")
             .issuer("https://server.example.com")
             .audience("https://service.example.com")
+            .subject("sommeUser")
             .sign();
+
+        Mockito.doReturn(
+            User(
+                "userId",
+                "name",
+                listOf(UserGroup("admin", null))
+            )
+        ).`when`(hubclient)
+            .getUser(ArgumentMatchers.anyString())
 
         Mockito.doReturn(
             UserGroupsResponse(
@@ -68,6 +75,7 @@ class HubAugmentorTest {
             .statusCode(200)
 
         Mockito.verify(hubclient, Mockito.atMostOnce()).getUserGroups(1, 1000)
+        Mockito.verify(hubclient, Mockito.atMostOnce()).getUser("someUser")
         Mockito.verify(hubclient, Mockito.atMostOnce()).getHeader()
     }
 }
