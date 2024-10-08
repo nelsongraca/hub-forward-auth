@@ -9,7 +9,7 @@ import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.QueryParam
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
 
-@Path("/rest/")
+@Path("/api/rest/")
 @RegisterRestClient(configKey = "hub-client")
 @AccessToken
 interface HubClient {
