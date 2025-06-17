@@ -7,13 +7,13 @@
     <version>1.0.0-SNAPSHOT</version>
     <properties>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
-        <kotlin.version>1.9.22</kotlin.version>
-        <maven.compiler.release>17</maven.compiler.release>
+        <kotlin.version>2.1.21</kotlin.version>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.10.0</quarkus.platform.version>
+        <quarkus.platform.version>3.23.3</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.1.2</surefire-plugin.version>
     </properties>
@@ -108,11 +108,18 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>kotlin-extensions</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -180,15 +187,29 @@
                 <executions>
                     <execution>
                         <id>compile</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/main/kotlin</source>
+                                <source>target/generated-sources/annotations</source>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/test/kotlin</source>
+                                <source>target/generated-test-sources/test-annotations</source>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                 </executions>
                 <dependencies>
@@ -200,7 +221,7 @@
                 </dependencies>
                 <configuration>
                     <javaParameters>true</javaParameters>
-                    <jvmTarget>17</jvmTarget>
+                    <jvmTarget>21</jvmTarget>
                     <compilerPlugins>
                         <plugin>all-open</plugin>
                     </compilerPlugins>

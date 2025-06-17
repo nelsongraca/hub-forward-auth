@@ -24,6 +24,7 @@ class AuthResource(
     private val logger = LoggerFactory.getLogger(AuthResource::class.java)
 
     @GET
+    @Path("{path:.*}")
     fun root(@Context headers: HttpHeaders, @CookieParam(Util.COOKIE_NAME) returnUrl: String?): Response {
         val forwardedFor = headers.getHeaderString(Util.X_FORWARDED_FOR)
         if (util.isWhiteListed(forwardedFor))

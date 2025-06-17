@@ -5,6 +5,7 @@ import io.quarkus.oidc.runtime.OidcJwtCallerPrincipal
 import io.quarkus.security.identity.AuthenticationRequestContext
 import io.quarkus.security.identity.SecurityIdentity
 import io.quarkus.security.identity.SecurityIdentityAugmentor
+import io.quarkus.security.runtime.QuarkusPrincipal
 import io.quarkus.security.runtime.QuarkusSecurityIdentity
 import io.smallrye.mutiny.Uni
 import jakarta.enterprise.context.ApplicationScoped
@@ -12,7 +13,6 @@ import jakarta.ws.rs.WebApplicationException
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.slf4j.LoggerFactory
 import java.util.function.Supplier
-
 
 @ApplicationScoped
 class HubAugmentor : SecurityIdentityAugmentor {
@@ -40,9 +40,13 @@ class HubAugmentor : SecurityIdentityAugmentor {
             Supplier {
                 val builder = QuarkusSecurityIdentity.builder(identity)
                 try {
-                    val groups = hubClient.getUserGroups(1, 1000).userGroups
-                    val user = hubClient.getUser((identity.principal as OidcJwtCallerPrincipal).subject)
-                    user.groups.forEach { g -> g.name = groups.find { it.id == g.id }?.name }
+                    val user = if (identity.principal is OidcJwtCallerPrincipal) {
+                        hubClient.getUser((identity.principal as OidcJwtCallerPrincipal).subject)
+                    }
+                    else {
+                        hubClient.getMe()
+                    }
+                    builder.setPrincipal(QuarkusPrincipal(user.login))
                     for (userGroup in user.groups) {
                         builder.addRole(userGroup.name)
                     }
@@ -54,8 +58,8 @@ class HubAugmentor : SecurityIdentityAugmentor {
                     if (services.isNotEmpty())
                         builder.addAttribute(SERVICE_URLS, services)
                 }
-                catch (ex: WebApplicationException) {
-                    logger.warn("Failed to fetch info for user: {}", identity.principal.name)
+                catch (ex: Exception) {
+                    logger.warn("Failed to fetch info for user: ${identity.principal.name}", ex)
                     builder.setAnonymous(true)
                         .build()
                 }
